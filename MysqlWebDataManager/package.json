@@ -1,0 +1,29 @@
+{
+  "version": "1.0.0",
+  "name": "asp.net",
+  "private": true,
+  "devDependencies": {
+    "gulp": "4.0.2",
+    "gulp-typescript": "5.0.1",
+    "rimraf": "3.0.0",
+    "gulp-concat": "2.6.1",
+    "gulp-clean-css": "4.2.0",
+    "gulp-rename": "1.4.0",
+    "gulp-uglify": "3.0.2",
+    "gulp-changed": "4.0.2"
+  },
+  "dependencies": {
+    "bootstrap": "4.3.1",
+    "jquery": "3.4.1",
+    "jquery-validation": "1.19.1",
+    "jquery-validation-unobtrusive": "3.2.11",
+    "jquery-form": "4.2.2",
+    "@types/node": "12.12.7",
+    "@types/bootstrap": "4.3.1",
+    "@types/jquery.validation": "1.16.6",
+    "@types/jquery-validation-unobtrusive": "3.2.32",
+    "@types/jquery": "3.3.31",
+    "@types/jquery.form": "3.26.30",
+    "bootstrap-datetime-picker": "2.4.4"
+  }
+}

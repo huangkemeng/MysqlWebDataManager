@@ -1,0 +1,74 @@
+﻿@using MysqlWebDataManager.Data.Models;
+@{
+    ViewData["Title"] = "主页";
+    Layout = "~/Views/Shared/_SDMLayout.cshtml";
+}
+@if (ViewBag.IsConnected == true)
+{
+    <div class="input-group container">
+        <div class="input-group-prepend" style="padding-right:0">
+            <span class="input-group-text">
+                新增连接
+            </span>
+        </div>
+        <input class="form-control text-danger" id="connectionName" required placeholder="连接名" />
+        <input class="form-control text-danger" id="connectionString" required placeholder="连接字符串" />
+        <button class="btn btn-primary" onclick="home.addConnection()">添加</button>
+    </div>
+    <br />
+    <div id="isConnected" class="container">
+        <h2>已连接数据库，连接名为：@ViewBag.ConnectName</h2>
+        <button class="btn btn-danger" onclick="home.cancelConnect()" type="button">断开连接</button>
+    </div>
+    <form class="container" style="display:none" id="connectForm" method="get" action="@Url.Action("ConnectDb")" onsubmit="return home.submitCallback()">
+        <div class="input-group mb-3">
+            <select type="text" class="form-control" name="connectName" placeholder="连接名">
+                @if (ViewBag.Connections != null)
+                {
+                    foreach (ConnectionInfo item in ViewBag.Connections)
+                    {
+                        <option value="@item.ConnectionName">@item.ConnectionName</option>
+                    }
+                }
+            </select>
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="submit">连接</button>
+            </div>
+        </div>
+    </form>
+}
+else
+{
+    <div class="input-group container">
+        <div class="input-group-prepend" style="padding-right:0">
+            <span class="input-group-text">
+                新增连接
+            </span>
+        </div>
+        <input class="form-control text-danger" id="connectionName" required placeholder="连接名" />
+        <input class="form-control text-danger" id="connectionString" required placeholder="连接字符串" />
+        <button class="btn btn-primary" onclick="home.addConnection()">添加</button>
+    </div>
+    <br />
+    <div id="isConnected" class="container" style="display:none">
+        <h2>已连接数据库，连接名为：@ViewBag.ConnectName</h2>
+        <button class="btn btn-danger" onclick="home.cancelConnect()" type="button">断开连接</button>
+    </div>
+    <form class="container" method="get" action="@Url.Action("ConnectDb")" onsubmit="return home.submitCallback()" id="connectForm">
+        <div class="input-group mb-3">
+            <select type="text" class="form-control" name="connectName" placeholder="连接名">
+                @if (ViewBag.Connections != null)
+                {
+                    foreach (ConnectionInfo item in ViewBag.Connections)
+                    {
+                        <option value="@item.ConnectionName">@item.ConnectionName</option>
+                    }
+                }
+            </select>
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="submit">连接</button>
+            </div>
+        </div>
+    </form>
+}
+<script src="~/tjs/home.js"></script>

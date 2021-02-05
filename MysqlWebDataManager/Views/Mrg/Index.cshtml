@@ -1,0 +1,197 @@
+﻿@using System.Data;
+@using SqlSugar;
+@{
+    var title_name = string.IsNullOrWhiteSpace(ViewBag.TableInfo.Description) ? ViewBag.TableInfo.Name : $"{ViewBag.TableInfo.Description}({ViewBag.TableInfo.Name})";
+    int pageSize = 15;
+    ViewData["Title"] = $"{title_name}-管理页";
+    Layout = "~/Views/Shared/_SDMLayout.cshtml";
+}
+
+@section Styles{
+    <link href="~/lib/bootstrap-datetime-picker/dist/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+}
+<h2>@title_name</h2>
+<div class="container">
+    <div class="card">
+        <div class="card-header">查询</div>
+        <div class="card-body">
+
+        </div>
+    </div>
+</div>
+<br />
+
+<div class="container d-flex flex-row-reverse">
+    <div class="btn-group">
+        <button type="button" class="btn btn-primary" onclick="mrg.ShowAdd()">新增</button>
+        <button type="button" class="btn btn-primary" onclick="mrg.ShowEdit()">编辑</button>
+        <button type="button" class="btn btn-secondary" onclick="mrg.IsSetStatusKeyWord(1)">启用</button>
+        <button type="button" class="btn btn-warning" onclick="mrg.IsSetStatusKeyWord(0)">禁用</button>
+        <button type="button" class="btn btn-danger" onclick="mrg.DeleteItems()">删除</button>
+    </div>
+</div>
+
+<div class="table-responsive container">
+    <table id="data_table" class="table table-bordered table-striped text-nowrap" data-isTable data-TableName="@ViewBag.TableInfo.Name">
+        <thead>
+            <tr>
+                <th>
+                    <input class="custom-checkbox" onchange="mrg.CheckAllChange(this)" type="checkbox" />
+                </th>
+                @foreach (DbColumnInfo item in ViewBag.ColumnsInfo)
+                {
+                    <th @(item.IsPrimarykey ? "data-iskey" : "") data-DbColumnName="@item.DbColumnName">@(string.IsNullOrEmpty(item.ColumnDescription) ? item.DbColumnName : item.ColumnDescription)</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (DataRow row in ViewBag.Rows)
+            {
+                <tr>
+                    <th scope="row">
+                        <input class="custom-checkbox row-checkbox" type="checkbox" />
+                    </th>
+                    @foreach (DbColumnInfo column in ViewBag.ColumnsInfo)
+                    {
+                        <th>@row[column.DbColumnName].ToString()</th>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<br />
+<div class="container d-flex flex-row-reverse">
+    <ul class="pagination">
+        <li class="page-item"><input class="page-link text-muted goto-page" type="number" placeholder="页码" value="@ViewBag.CurrentPage" /></li>
+        <li class="page-item @(ViewBag.CurrentPage == 1?"disabled":"")" title="首页"><a class="page-link" href="@Url.Action("Index")?tableName=@ViewBag.TableInfo.Name&pageNumber=1">&laquo;</a></li>
+        <li class="page-item @(ViewBag.CurrentPage == 1?"disabled":"")" title="上一页"><a class="page-link" href="@Url.Action("Index")?tableName=@ViewBag.TableInfo.Name&pageNumber=@(ViewBag.CurrentPage>1?ViewBag.CurrentPage-1:1)">&lsaquo;</a></li>
+        @for (int i = 5; i >= 1; i--)
+        {
+            int previou_page = ViewBag.CurrentPage - i;
+            if (previou_page > 0)
+            {
+                <li class="page-item" title="第(@previou_page)页"><a class="page-link" href="@Url.Action("Index")?tableName=@ViewBag.TableInfo.Name&pageNumber=@previou_page">@previou_page</a></li>
+            }
+            else
+            {
+                continue;
+            }
+        }
+        <li class="page-item active" title="当前页"><a class="page-link">@ViewBag.CurrentPage</a></li>
+        @for (int i = 1; i <= 5; i++)
+        {
+            int next_page = ViewBag.CurrentPage + i;
+            if (next_page * pageSize - ViewBag.TotalNumber < pageSize)
+            {
+                <li class="page-item" title="第(@next_page)页"><a class="page-link" href="@Url.Action("Index")?tableName=@ViewBag.TableInfo.Name&pageNumber=@next_page">@next_page</a></li>
+            }
+            else
+            {
+                continue;
+            }
+        }
+        <li title="下一页" class="page-item @(ViewBag.TotalNumber<=ViewBag.CurrentPage * pageSize?"disabled":"")"><a class="page-link" href="@Url.Action("Index")?tableName=@ViewBag.TableInfo.Name&pageNumber=@(ViewBag.CurrentPage+1)">&rsaquo;</a></li>
+        <li title="最后一页" class="page-item @(ViewBag.TotalNumber<=ViewBag.CurrentPage * pageSize?"disabled":"")"><a class="page-link" href="@Url.Action("Index")?tableName=@ViewBag.TableInfo.Name&pageNumber=@(ViewBag.TotalNumber%pageSize>0?Convert.ToInt32(ViewBag.TotalNumber/pageSize)+1:Convert.ToInt32(ViewBag.TotalNumber/pageSize))">&raquo;</a></li>
+        <li class="page-item"><span class="text-muted total-page-number" style="display:block;position:relative;padding:0.5rem 0.75rem">共@(ViewBag.TotalNumber % pageSize > 0 ? Convert.ToInt32(ViewBag.TotalNumber / pageSize) + 1 : Convert.ToInt32(ViewBag.TotalNumber / pageSize))页@(ViewBag.TotalNumber)条数据</span></li>
+    </ul>
+</div>
+<div class="modal fade" id="Modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">新增</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="height:800px;overflow:scroll">
+                @foreach (DbColumnInfo item in ViewBag.ColumnsInfo)
+                {
+                    if (!(item.IsPrimarykey && (item.IsIdentity || !string.IsNullOrWhiteSpace(item.DefaultValue))))
+                    {
+                        <div class="input-group col-12">
+                            <div class="input-group-prepend col-3" style="padding-right:0">
+                                <span class="input-group-text col-12">
+                                    @(string.IsNullOrWhiteSpace(item.ColumnDescription) ? item.DbColumnName : item.ColumnDescription)
+                                    @if (!item.IsNullable)
+                                    {
+                                        <em style="color: red;">*</em>
+                                    }
+                                </span>
+                            </div>
+                            <input class="form-control col-6 @(!item.IsNullable?"text-danger":"") @((item.DataType == "datetime" || item.DataType == "timestamp" || item.DataType == "time" || item.DataType == "date")?"datetimepicker":"")" @(!item.IsNullable ? "required" : "") data-DbColumnName="@item.DbColumnName" data-isColumn placeholder="对应数据库字段 @item.DbColumnName @item.DataType @(!item.IsNullable?"必填项":"")" />
+                            <button class="btn btn-primary" onclick="mrg.FromOthers(this)">来源</button>
+                            @if (!string.IsNullOrWhiteSpace(item.DefaultValue))
+                            {
+                                <button class="btn btn-info" data-DefaultValue="@item.DefaultValue" onclick="mrg.SetDefaultValue(this)">默认值</button>
+                            }
+                        </div>
+                        <br />
+                    }
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary edit-add-btn">确定</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="SetStatusModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">设置启禁用关键字</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <div class="input-group-prepend" style="padding-right:0">
+                        <span class="input-group-text">
+                            选择一个字段
+                        </span>
+                    </div>
+                    <select class="form-control" id="StatusKeyWord">
+                        @foreach (DbColumnInfo item in ViewBag.ColumnsInfo)
+                        {
+                            if (!item.IsPrimarykey)
+                            {
+                                <option value="@item.DbColumnName">@item.DbColumnName</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <br />
+                <div class="input-group">
+                    <div class="input-group-prepend" style="padding-right:0">
+                        <span class="input-group-text">
+                            启用
+                        </span>
+                    </div>
+                    <input class="form-control" id="KeyWordOn" placeholder="这个字段表示启用时的值" />
+                </div>
+                <br />
+                <div class="input-group">
+                    <div class="input-group-prepend" style="padding-right:0">
+                        <span class="input-group-text">
+                            禁用
+                        </span>
+                    </div>
+                    <input class="form-control" id="KeyWordOff" placeholder="这个字段表示禁用时的值" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="mrg.SetStatusKeyWord()">确定</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="DynamicModal">
+</div>
+@section Scripts{
+    <script src="~/lib/bootstrap-datetime-picker/dist/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/lib/bootstrap-datetime-picker/dist/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="~/tjs/mrg.js"></script>
+}

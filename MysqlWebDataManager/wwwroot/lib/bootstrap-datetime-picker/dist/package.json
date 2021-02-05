@@ -1,0 +1,64 @@
+{
+  "_from": "bootstrap-datetime-picker@2.4.4",
+  "_id": "bootstrap-datetime-picker@2.4.4",
+  "_inBundle": false,
+  "_integrity": "sha1-t8/oQ6PG0iHAMpPJpGSkzDXXOWg=",
+  "_location": "/bootstrap-datetime-picker",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "bootstrap-datetime-picker@2.4.4",
+    "name": "bootstrap-datetime-picker",
+    "escapedName": "bootstrap-datetime-picker",
+    "rawSpec": "2.4.4",
+    "saveSpec": null,
+    "fetchSpec": "2.4.4"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://r.cnpmjs.org/bootstrap-datetime-picker/download/bootstrap-datetime-picker-2.4.4.tgz",
+  "_shasum": "b7cfe843a3c6d221c03293c9a464a4cc35d73968",
+  "_spec": "bootstrap-datetime-picker@2.4.4",
+  "_where": "D:\\My\\MysqlWebDataManager\\MysqlWebDataManager",
+  "author": {
+    "name": "Sebastien Malot"
+  },
+  "bugs": {
+    "url": "https://github.com/smalot/bootstrap-datetimepicker"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "Both Date and Time picker widget based on twitter bootstrap",
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-jshint": "^1.0.0",
+    "grunt-version-check": "^0.3.7",
+    "jshint": "^2.9.4",
+    "load-grunt-tasks": "^3.4.1"
+  },
+  "homepage": "http://www.malot.fr/bootstrap-datetimepicker/",
+  "keywords": [
+    "bootstrap",
+    "datetime",
+    "picker"
+  ],
+  "license": "Apache 2.0",
+  "main": "./js/bootstrap-datetimepicker.js",
+  "maintainers": [
+    {
+      "name": "Sebastien Malot"
+    },
+    {
+      "name": "Christian Vaas",
+      "email": "christianvaas@auspex.eu"
+    }
+  ],
+  "name": "bootstrap-datetime-picker",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/smalot/bootstrap-datetimepicker.git"
+  },
+  "version": "2.4.4"
+}

@@ -1,0 +1,57 @@
+﻿@using SqlSugar;
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">来源</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="input-group container">
+                <div class="input-group-prepend" style="padding-right:0">
+                    <span class="input-group-text">
+                        表
+                    </span>
+                </div>
+                <select class="form-control" id="TableNames">
+                    @foreach (DbTableInfo item in ViewBag.TableList)
+                    {
+                        <option value="@item.Name">@item.Name</option>
+                    }
+                </select>
+            </div>
+            <br />
+            <div class="input-group container">
+                <div class="input-group-prepend" style="padding-right:0">
+                    <span class="input-group-text">
+                        字段
+                    </span>
+                </div>
+                <select class="form-control" id="ColumnNames">
+                </select>
+            </div>
+            <br />
+            <div class="input-group container">
+                <div class="table-responsive">
+                    <table id="OtherTable" class="table table-bordered table-striped text-nowrap">
+                        <thead id="OtherThead">
+                            <tr>
+                            </tr>
+                        </thead>
+                        <tbody id="OtherTbody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <br />
+            <div class="container d-flex flex-row-reverse">
+                <ul class="pagination pagination-sm" id="OtherPagination">
+                </ul>
+            </div>
+            <br />
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="ChooseOtherData">确定</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+        </div>
+    </div>
+</div>
